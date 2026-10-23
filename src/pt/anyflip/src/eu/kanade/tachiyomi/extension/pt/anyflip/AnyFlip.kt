@@ -14,7 +14,6 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
 
 @Source
 abstract class AnyFlip : KeiSource() {
@@ -129,19 +128,8 @@ abstract class AnyFlip : KeiSource() {
         }
     }
 
-    /**
-     * Finds all publication IDs belonging to the dbeui AnyFlip account.
-     *
-     * AnyFlip publication URLs look like:
-     *
-     * https://anyflip.com/dbeui/xxxx/
-     *
-     * The homepage contains links to the account's publications,
-     * so we extract those IDs instead of maintaining a hard-coded list.
-     */
     private suspend fun discoverBookIds(): List<String> {
         val response = client.get(getHomeUrl())
-
         val html = response.body.string()
 
         val pattern = Regex(
@@ -159,7 +147,6 @@ abstract class AnyFlip : KeiSource() {
         val url = "$ONLINE_BASE/$id/mobile/javascript/config.js"
 
         val response = client.get(url)
-
         val text = response.body.string()
 
         val start = text.indexOf('{')
