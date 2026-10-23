@@ -1,17 +1,17 @@
+import io.github.keiyoushi.gradle.api.ContentWarning
+
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(kei.plugins.extension)
 }
 
-android {
-    namespace = "eu.kanade.tachiyomi.extension.pt.anyflip"
-    compileSdk = 35
+keiyoushi {
+    name = "AnyFlip"
+    versionCode = 1
+    contentWarning = ContentWarning.SAFE
+    libVersion = "1.6"
 
-    defaultConfig {
-        minSdk = 21
+    source {
+        lang = "pt"
+        baseUrl = "https://anyflip.com"
     }
-}
-
-dependencies {
-    implementation(project(":core"))
 }
