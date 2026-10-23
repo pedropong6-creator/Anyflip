@@ -2,9 +2,6 @@ name: Build AnyFlip
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
   build:
@@ -15,20 +12,22 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: keiyoushi/extensions-source
+          ref: main
           fetch-depth: 1
 
-      - name: Copy AnyFlip extension
+      - name: Checkout AnyFlip
         uses: actions/checkout@v4
         with:
-          repository: calasalasalasa/anyflip
+          repository: pedropong6-creator/Anyflip
+          ref: main
           path: custom-extension
           fetch-depth: 1
 
       - name: Replace AnyFlip source
         run: |
           rm -rf src/pt/anyflip
-          mkdir -p src/pt
-          cp -r custom-extension/src/pt/anyflip src/pt/anyflip
+          mkdir -p src/pt/anyflip
+          cp -r custom-extension/src/pt/anyflip/* src/pt/anyflip/
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
