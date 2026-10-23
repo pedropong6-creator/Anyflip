@@ -2,46 +2,51 @@ name: Build AnyFlip
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Keiyoushi
+      - name: Check out repository
         uses: actions/checkout@v4
         with:
-          repository: keiyoushi/extensions-source
-          fetch-depth: 1
+          ref: main
 
-      - name: Copy AnyFlip extension
-        uses: actions/checkout@v4
-        with:
-          repository: pedropong6-creator/anyflip
-          path: custom-extension
-          fetch-depth: 1
-
-      - name: Replace AnyFlip source
-        run: |
-          rm -rf src/pt/anyflip
-          mkdir -p src/pt/anyflip
-          cp -r custom-extension/src/pt/anyflip src/pt/
-
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
 
-      - name: Build extension
+      - name: Format source code
+        run: ./gradlew spotlessApply
+
+      - name: Commit formatting changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add src/eu/kanade/tachiyomi/extension/pt/anyflip/AnyFlip.kt
+
+          if git diff --cached --quiet; then
+            echo "No formatting changes to commit."
+          else
+            git commit -m "Format AnyFlip extension"
+            git push origin main
+          fi
+
+      - name: Build AnyFlip
         run: ./gradlew :src:pt:anyflip:assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: anyflip-extension
+          name: anyflip-debug
           path: src/pt/anyflip/build/outputs/apk/debug/*.apk
