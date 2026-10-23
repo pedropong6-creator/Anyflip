@@ -36,8 +36,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Format code
-        run: ./gradlew spotlessApply
 
       - name: Build extension
         run: ./gradlew :src:pt:anyflip:assembleDebug
