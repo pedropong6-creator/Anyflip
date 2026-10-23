@@ -20,7 +20,7 @@ jobs:
       - name: Copy AnyFlip extension
         uses: actions/checkout@v4
         with:
-          repository: calasalasalasa/anyflip
+          repository: pedropong6-creator/anyflip
           path: custom-extension
           fetch-depth: 1
 
