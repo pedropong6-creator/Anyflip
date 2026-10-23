@@ -1,0 +1,46 @@
+name: Build AnyFlip
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Keiyoushi
+        uses: actions/checkout@v4
+        with:
+          repository: keiyoushi/extensions-source
+          fetch-depth: 1
+
+      - name: Copy AnyFlip extension
+        uses: actions/checkout@v4
+        with:
+          repository: calasalasalasa/anyflip
+          path: custom-extension
+          fetch-depth: 1
+
+      - name: Replace AnyFlip source
+        run: |
+          rm -rf src/pt/anyflip
+          mkdir -p src/pt
+          cp -r custom-extension/src/pt/anyflip src/pt/anyflip
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build extension
+        run: ./gradlew :src:pt:anyflip:assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: anyflip-extension
+          path: src/pt/anyflip/build/outputs/apk/debug/*.apk
